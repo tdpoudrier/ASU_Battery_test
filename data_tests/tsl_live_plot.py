@@ -11,7 +11,7 @@ i2c = board.I2C()  # uses board.SCL and board.SDA
 # Initialize the sensor.
 sensor = adafruit_tsl2591.TSL2591(i2c)
 
-fig = plt.figure();
+fig = plt.figure()
 ax1 = fig.add_subplot(1,1,1)
 xs = []
 ys = []
