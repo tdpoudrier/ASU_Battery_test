@@ -1,7 +1,5 @@
 """
-===============
-Embedding in Tk
-===============
+Read data from csv file and display matplotlib graph on tkinter
 
 """
 
@@ -9,55 +7,53 @@ import tkinter
 
 import numpy as np
 
-# Implement the default Matplotlib key bindings.
-from matplotlib.backend_bases import key_press_handler
-from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg,
-                                               NavigationToolbar2Tk)
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg)
 from matplotlib.figure import Figure
 
+import csv
+
+data = np.array([])
+
+#Get data from csv file
+with open('data.txt', 'r', newline='') as read_file, open('data.csv', 'w', newline='') as write_file:
+    reader = csv.reader(read_file, delimiter=',')
+    writer = csv.writer(write_file)
+    for row in reader:
+        data = np.append(data, row)
+
+#Create Tk window
 root = tkinter.Tk()
 root.wm_title("Embedding in Tk")
 
+#Create matplotlib graph
 fig = Figure(figsize=(5, 4), dpi=100)
-t = np.arange(0, 3, .01)
+t = np.arange(0, len(data), 1)
 ax = fig.add_subplot()
-line, = ax.plot(t, 2 * np.sin(2 * np.pi * t))
+line, = ax.plot(t, data)
 ax.set_xlabel("time [s]")
 ax.set_ylabel("f(t)")
 
-canvas = FigureCanvasTkAgg(fig, master=root)  # A tk.DrawingArea.
+#Add figure to tk drawing area
+frame = tkinter.Frame(root, relief='raised')
+canvas = FigureCanvasTkAgg(fig, master=frame)  # A tk.DrawingArea.
 canvas.draw()
 
-# pack_toolbar=False will make it easier to use a layout manager later on.
-toolbar = NavigationToolbar2Tk(canvas, root, pack_toolbar=False)
-toolbar.update()
-
-#Matplotlib default shortcuts
-canvas.mpl_connect(
-    "key_press_event", lambda event: print(f"you pressed {event.key}"))
-canvas.mpl_connect("key_press_event", key_press_handler)
-
+#Quit button
 button_quit = tkinter.Button(master=root, text="Quit", command=root.destroy)
 
-
-def update_frequency(new_val):
-    # retrieve frequency
-    f = float(new_val)
-
-    # update data
-    y = 2 * np.sin(2 * np.pi * f * t)
-    line.set_data(t, y)
-
-    # required to update canvas and attached toolbar!
-    canvas.draw()
-
-
-# Packing order is important. Widgets are processed sequentially and if there
-# is no space left, because the window is too small, they are not displayed.
-# The canvas is rather flexible in its size, so we pack it last which makes
-# sure the UI controls are displayed as long as possible.
+#Place widgets on Tk window
+frame.pack()
 button_quit.pack(side=tkinter.BOTTOM)
-toolbar.pack(side=tkinter.BOTTOM, fill=tkinter.X)
 canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=True)
+
+#Define hid graph button
+button_hide_graph = tkinter.Button(master=root, text="Hide Plot")
+button_hide_graph.bind('<ButtonPress>', lambda e: canvas.get_tk_widget().pack_forget())
+button_hide_graph.pack()
+
+#Define show graph button
+button_show_graph = tkinter.Button(master=root, text="Show Plot")
+button_show_graph.bind('<ButtonPress>', lambda e: canvas.get_tk_widget().pack(side=tkinter.TOP, fill=tkinter.BOTH, expand=True))
+button_show_graph.pack()
 
 tkinter.mainloop()
