@@ -1,6 +1,8 @@
 """
 Has buttons to start test, end test, and exit program
 The test is a second counter that is displayed on interface
+
+counter uses a recursive method that calls root.after(1000, method)
 """
 
 #Imports
