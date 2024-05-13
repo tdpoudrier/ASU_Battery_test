@@ -1,3 +1,7 @@
+"""
+Display timestamp data on picamera2 recorded video using opencv
+"""
+
 from picamera2 import Picamera2, Preview, MappedArray
 from picamera2.encoders import H264Encoder, Quality
 from picamera2.outputs import FfmpegOutput
