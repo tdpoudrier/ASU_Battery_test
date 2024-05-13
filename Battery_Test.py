@@ -1,12 +1,17 @@
 """
-Template for main program. Has buttons to start test, end test, and exit program
+Has buttons to start test, end test, and exit program
+The test is a second counter that is displayed on interface
+
+counter uses a recursive method that calls root.after(1000, method)
 """
 
 #Imports
 from tkinter import *
 from tkinter import ttk
+import csv
 
-#csv file
+timerID = None
+count = 0
 
 #Define root of interface
 root = Tk()
@@ -22,9 +27,35 @@ exitButton = ttk.Button(root, text='Exit Program')
 #Define label
 label = ttk.Label(frame, text='Test not running')
 
+def append_to_csv(filename, data):
+    with open(filename, 'a', newline='') as file:
+        writer = csv.writer(file, delimiter=',', quoting=csv.QUOTE_NONNUMERIC)
+        writer.writerow([data])
+
+#start the timer, call using button.configure(command=start_timer)
+def start_timer():
+    global timerID
+    timerID = root.after(1000, start_timer)
+    global count
+    global label
+    string = "Test Running " + str(count)
+    count = count + 1
+    label.configure(text=string)
+    append_to_csv("test_data.csv", count)
+
+#stops the timer, call using button.configure(command=start_timer)
+def stop_timer():
+    global timerID
+    global count
+    if timerID is not None:
+        root.after_cancel(timerID)
+        timerID = None
+        label.configure(text='Test not running')
+        count = 0
+
 #Bind button actions
-button1.bind('<ButtonPress>', lambda e: label.configure(text='Test Running'))
-button2.bind('<ButtonPress>', lambda e: label.configure(text='Test not running'))
+button1.configure(command=start_timer)
+button2.configure(command=stop_timer)
 exitButton.bind('<ButtonPress>', lambda e: root.quit())
 
 #Add elements to frame
