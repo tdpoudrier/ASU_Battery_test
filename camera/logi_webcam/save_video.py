@@ -2,7 +2,8 @@
 # video using OpenCV 
   
    
-import cv2 
+import cv2
+import time
   
    
 # Create an object to read  
@@ -27,12 +28,28 @@ size = (frame_width, frame_height)
 result = cv2.VideoWriter('filename.mp4',  
                          cv2.VideoWriter_fourcc(*'mp4v'), 
                          30, size) 
+
+count = 0
+
+color = (0,255,0)
+origin = (0,30)
+font = cv2.FONT_HERSHEY_SIMPLEX
+scale = 1
+thickness = 2
+
+def apply_timestamp(frame):
+    #use global count
+    global count
     
+    #add timestamp to video
+    timestamp = time.strftime("%Y-%m-%d %X") + " " + str(count)
+    cv2.putText(frame, timestamp, origin, font, scale, color, thickness)
+
 while(True): 
     ret, frame = video.read() 
   
     if ret == True:  
-  
+        apply_timestamp(frame)
         # Write the frame into the file
         result.write(frame) 
   
