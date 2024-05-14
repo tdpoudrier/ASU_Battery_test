@@ -47,11 +47,12 @@ def update_filename():
     open(filename, 'x', newline = '')
 
 #Add data to csv data file
+# data must be an iterable
 def append_to_csv(data):
     global filename
     with open(filename, 'a', newline='') as file:
         writer = csv.writer(file, delimiter=',', quoting=csv.QUOTE_NONNUMERIC)
-        writer.writerow([data])
+        writer.writerow(data)
 
 #Start and record video capture on seperate process
 def startrecording(e, queue, video_file):
@@ -121,7 +122,7 @@ def start_test():
         test_started = True
         start_recording_proc()
     
-    append_to_csv(count)
+    append_to_csv([count])
 
 #stops the test
 def stop_test():
@@ -140,12 +141,14 @@ def exit_program():
     stop_test()
     root.destroy()
 
+
 if __name__ == "__main__":
     queue = multiprocessing.Queue()
 
     #Define root of interface
     root = Tk()
-    root.geometry('300x150')
+    # root.geometry('300x150')
+    root.wm_title("ASU Battery Analyzer")
 
     #Define frame
     frame = ttk.Frame(root, relief='raised')
@@ -157,12 +160,12 @@ if __name__ == "__main__":
 
     #Define label
     label = ttk.Label(frame, text='Test not running')
-    
+
     #Bind button actions
     button1.configure(command=start_test)
     button2.configure(command=stop_test)
     exitButton.configure(command=exit_program)
-
+    
     #Add elements to frame
     frame.grid()
     button1.grid()
@@ -171,4 +174,5 @@ if __name__ == "__main__":
     exitButton.grid()
 
     #Run mainloop of interface
+    root.protocol("WM_DELETE_WINDOW", exit_program)
     root.mainloop()
