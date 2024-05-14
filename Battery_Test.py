@@ -1,8 +1,8 @@
 """
-Has buttons to start test, end test, and exit program
-The test is a second counter that is displayed on interface
-
-counter uses a recursive method that calls root.after(1000, method)
+File: Battery_Test.py
+Author: Tevin Poudrier
+Date: Tuesday, May 14, 2024 1:22:45 PM
+Description: Record ANVIS battery voltage, light level of chamber, and record ANVIS output.
 """
 
 #Imports
@@ -104,7 +104,7 @@ def start_recording_proc():
 # end video capture
 def stoprecording():
     multi_event.set()
-    multi_process.join() #error if recording not started
+    multi_process.join()
 
 #Start the test, this method uses recursion to save data every second
 def start_test():
