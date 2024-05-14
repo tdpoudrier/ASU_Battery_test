@@ -46,7 +46,7 @@ def start_recording_proc():
 # -------end video capture and stop tk
 def stoprecording():
     e.set()
-    p.join()
+    p.join() #error if recording not started
 
     root.quit()
     root.destroy()
@@ -54,7 +54,7 @@ def stoprecording():
 if __name__ == "__main__":
     # -------configure window
     root = Tk()
-    root.geometry("%dx%d+0+0" % (100, 100))
+    root.geometry("%dx%d" % (300, 150))
     startbutton=ttk.Button(root,text='START',command=start_recording_proc)
     stopbutton=ttk.Button(root,text='STOP', command=stoprecording)
     startbutton.pack()
