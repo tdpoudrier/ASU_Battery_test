@@ -11,7 +11,7 @@ from tkinter import ttk
 import csv
 from pathlib import Path
 
-#Global variables
+#Global variables (variables that are modified in functions)
 timerID = None
 count = 0
 filename = "ASU_Battery_test_0.csv"
@@ -30,20 +30,6 @@ def update_filename():
         my_file = Path(filename)
         file_count = file_count + 1
     open(filename, 'x', newline = '')
-
-#Define root of interface
-root = Tk()
-
-#Define frame
-frame = ttk.Frame(root, relief='raised')
-
-#Define buttons
-button1 = ttk.Button(frame, text='Start Test')
-button2 = ttk.Button(frame, text='End Test')
-exitButton = ttk.Button(root, text='Exit Program')
-
-#Define label
-label = ttk.Label(frame, text='Test not running')
 
 def append_to_csv(data):
     global filename
@@ -77,17 +63,34 @@ def stop_test():
         count = 0
         file_created = False
 
-#Bind button actions
-button1.configure(command=start_test)
-button2.configure(command=stop_test)
-exitButton.bind('<ButtonPress>', lambda e: root.quit())
 
-#Add elements to frame
-frame.grid()
-button1.grid()
-button2.grid()
-label.grid()
-exitButton.grid()
 
-#Run mainloop of interface
-root.mainloop()
+if __name__ == "__main__":
+    #Define root of interface
+    root = Tk()
+
+    #Define frame
+    frame = ttk.Frame(root, relief='raised')
+
+    #Define buttons
+    button1 = ttk.Button(frame, text='Start Test')
+    button2 = ttk.Button(frame, text='End Test')
+    exitButton = ttk.Button(root, text='Exit Program')
+
+    #Define label
+    label = ttk.Label(frame, text='Test not running')
+    
+    #Bind button actions
+    button1.configure(command=start_test)
+    button2.configure(command=stop_test)
+    exitButton.bind('<ButtonPress>', lambda e: root.quit())
+
+    #Add elements to frame
+    frame.grid()
+    button1.grid()
+    button2.grid()
+    label.grid()
+    exitButton.grid()
+
+    #Run mainloop of interface
+    root.mainloop()
