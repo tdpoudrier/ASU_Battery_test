@@ -121,6 +121,8 @@ def start_test():
     video_file_label.configure(text='Video file: ' + video_file)
     start_time_label.configure(text='Start Time: ' + start_time.strftime("%Y-%m-%d %H:%M:%S"))
     
+    start_button.config(state=DISABLED)
+    lux_button.config(state=DISABLED)
     
 
 def test_timer():
@@ -151,11 +153,16 @@ def stop_test():
         # label.configure(text='Test not running')
         count = 0
         # stoprecording()
+        start_button.config(state=NORMAL)
+        lux_button.config(state=NORMAL)
 
 # Terminate program
 def exit_program():
     stop_test()
     root.destroy()
+
+def get_lux():
+    None
 
 
 if __name__ == "__main__":
@@ -182,9 +189,10 @@ if __name__ == "__main__":
                                 width = 100)
 
     #Define buttons
-    button1 = ttk.Button(button_frame, text='Start Test', padding=20)
-    button2 = ttk.Button(button_frame, text='End Test', padding=20)
-    exitButton = ttk.Button(root, text='Exit Program')
+    start_button = ttk.Button(button_frame, text='Start Test', padding=20)
+    stop_button = ttk.Button(button_frame, text='End Test', padding=20)
+    exitButton = ttk.Button(button_frame, text='Exit Program', padding=20)
+    lux_button = ttk.Button(button_frame, text='Get Lux', padding=20)
 
     #Define label
     test_status_label = ttk.Label(test_info_frame, text='Test Status: Idle')
@@ -195,14 +203,16 @@ if __name__ == "__main__":
     elapsed_time_label = ttk.Label(test_info_frame, text='Elapsed Time: ')
 
     #Bind button actions
-    button1.configure(command=start_test)
-    button2.configure(command=stop_test)
+    start_button.configure(command=start_test)
+    stop_button.configure(command=stop_test)
+    lux_button.configure(command=get_lux)
     exitButton.configure(command=exit_program)
     
     #Add elements to button frame
-    button1.grid(row=0, pady=10)
-    button2.grid(row=1, pady=10)
-    exitButton.grid(row=2)
+    start_button.grid(row=0, pady=10)
+    stop_button.grid(row=1, pady=10)
+    lux_button.grid(row=2, pady=10)
+    exitButton.grid(row=3, pady=10)
 
     #Add elements to test info frame
     test_status_label.grid(sticky='w')
