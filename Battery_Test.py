@@ -7,12 +7,13 @@ Description: Record ANVIS battery voltage, light level of chamber, and record AN
 
 #Imports
 from tkinter import *
-from tkinter import ttk
+from tkinter import ttk, font
 import csv
 from pathlib import Path
 import multiprocessing
 import cv2
 import time
+from datetime import datetime
 
 #Global variables (variables that are modified in functions)
 timerID = None
@@ -109,31 +110,46 @@ def stoprecording():
 
 #Start the test, this method uses recursion to save data every second
 def start_test():
-    global timerID, count, label, test_started
+    update_filename()
+    start_recording_proc()
+    test_timer()
+
+    start_time = datetime.now()
+
+    test_status_label.configure(text='Test Status: Active')
+    data_file_label.configure(text='Data file: ' + filename)
+    video_file_label.configure(text='Video file: ' + video_file)
+    start_time_label.configure(text='Start Time: ' + start_time.strftime("%Y-%m-%d %H:%M:%S"))
     
-    timerID = root.after(1000, start_test) 
-    string = "Test Running " + str(count)
+    
+
+def test_timer():
+    global timerID, count
+    
+    #recursive call every second
+    timerID = root.after(1000, test_timer) 
+    
     count = count + 1
-    label.configure(text=string)
+
+    #Print elasped time in HH:MM:SS format
+    elapsed_time_label.configure(text='Elapsed time: ' + (str( (count // 3600)).zfill(2) ) + ':' 
+                                 + (str( (count // 60)).zfill(2) ) + ':' 
+                                 + (str( (count % 60)).zfill(2) ) )
+
     queue.put(count)
-    
-    if (not test_started):
-        update_filename()
-        test_started = True
-        start_recording_proc()
-    
     append_to_csv([count])
+
+    
 
 #stops the test
 def stop_test():
-    global timerID, count, test_started
+    global timerID, count
 
     if timerID is not None:
         root.after_cancel(timerID)
         timerID = None
-        label.configure(text='Test not running')
+        # label.configure(text='Test not running')
         count = 0
-        test_started = False
         stoprecording()
 
 # Terminate program
@@ -147,31 +163,59 @@ if __name__ == "__main__":
 
     #Define root of interface
     root = Tk()
+    root.defaultFont = font.nametofont("TkDefaultFont") 
+    root.defaultFont.configure(family="Segoe UI", 
+                                size=19) 
     # root.geometry('300x150')
     root.wm_title("ASU Battery Analyzer")
 
     #Define frame
-    frame = ttk.Frame(root, relief='raised')
+    button_frame = ttk.Frame(root, 
+                             relief='raised',
+                             padding=10,
+                             height = 300,
+                             width = 300)
+    test_info_frame = ttk.Frame(root, 
+                                relief='sunken',
+                                padding=10,
+                                height = 600,
+                                width = 100)
 
     #Define buttons
-    button1 = ttk.Button(frame, text='Start Test')
-    button2 = ttk.Button(frame, text='End Test')
+    button1 = ttk.Button(button_frame, text='Start Test')
+    button2 = ttk.Button(button_frame, text='End Test')
     exitButton = ttk.Button(root, text='Exit Program')
 
     #Define label
-    label = ttk.Label(frame, text='Test not running')
+    test_status_label = ttk.Label(test_info_frame, text='Test Status: Idle')
+    data_file_label = ttk.Label(test_info_frame, text='Data file: ')
+    video_file_label = ttk.Label(test_info_frame, text='Video file: ')
+    start_time_label = ttk.Label(test_info_frame, text='Start Time: ')
+    current_voltage_label = ttk.Label(test_info_frame, text='Current Voltage: ')
+    elapsed_time_label = ttk.Label(test_info_frame, text='Elapsed Time: ')
 
     #Bind button actions
     button1.configure(command=start_test)
     button2.configure(command=stop_test)
     exitButton.configure(command=exit_program)
     
-    #Add elements to frame
-    frame.grid()
-    button1.grid()
-    button2.grid()
-    label.grid()
-    exitButton.grid()
+    #Add elements to button frame
+    button1.grid(row=0, pady=10)
+    button2.grid(row=1, pady=10)
+    exitButton.grid(row=2)
+
+    #Add elements to test info frame
+    test_status_label.grid(sticky='w')
+    data_file_label.grid(sticky='w')
+    video_file_label.grid(sticky='w')
+    start_time_label.grid(sticky='w')
+    current_voltage_label.grid(sticky='w')
+    elapsed_time_label.grid(sticky='w')
+
+    #Add frames to root
+    button_frame.grid(column=0, row=0, sticky='N')
+    test_info_frame.grid(column=1, row=0, sticky='N')
+    
 
     #Run mainloop of interface
     root.protocol("WM_DELETE_WINDOW", exit_program)
