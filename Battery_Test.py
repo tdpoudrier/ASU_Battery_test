@@ -111,7 +111,7 @@ def stoprecording():
 #Start the test, this method uses recursion to save data every second
 def start_test():
     update_filename()
-    start_recording_proc()
+    # start_recording_proc()
     test_timer()
 
     start_time = datetime.now()
@@ -150,7 +150,7 @@ def stop_test():
         timerID = None
         # label.configure(text='Test not running')
         count = 0
-        stoprecording()
+        # stoprecording()
 
 # Terminate program
 def exit_program():
@@ -165,7 +165,7 @@ if __name__ == "__main__":
     root = Tk()
     root.defaultFont = font.nametofont("TkDefaultFont") 
     root.defaultFont.configure(family="Segoe UI", 
-                                size=19) 
+                                size=28) 
     # root.geometry('300x150')
     root.wm_title("ASU Battery Analyzer")
 
@@ -182,8 +182,8 @@ if __name__ == "__main__":
                                 width = 100)
 
     #Define buttons
-    button1 = ttk.Button(button_frame, text='Start Test')
-    button2 = ttk.Button(button_frame, text='End Test')
+    button1 = ttk.Button(button_frame, text='Start Test', padding=20)
+    button2 = ttk.Button(button_frame, text='End Test', padding=20)
     exitButton = ttk.Button(root, text='Exit Program')
 
     #Define label
