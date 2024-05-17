@@ -14,6 +14,8 @@ import multiprocessing
 import cv2
 import time
 from datetime import datetime
+import board
+import adafruit_tsl2591
 
 #Global variables (variables that are modified in functions)
 timerID = None
@@ -143,7 +145,7 @@ def test_timer():
     print_lux()
 
     queue.put(count)
-    append_to_csv([count])
+    append_to_csv([sensor.lux, count])
 
     
 
@@ -173,6 +175,13 @@ def print_lux():
 
 if __name__ == "__main__":
     queue = multiprocessing.Queue()
+
+    # Create sensor object, communicating over the board's default I2C bus
+    i2c = board.I2C()  # uses board.SCL and board.SDA
+    # i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
+
+    # Initialize the sensor.
+    sensor = adafruit_tsl2591.TSL2591(i2c)
 
     #Define root of interface
     root = Tk()
