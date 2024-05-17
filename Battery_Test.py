@@ -67,7 +67,7 @@ def startrecording(e, queue, video_file):
     # Create video recorder and encoding
     out = cv2.VideoWriter(video_file,  
                             cv2.VideoWriter_fourcc(*'mp4v'), 
-                            30, size) 
+                            100, size) # TODO - ask ASU about speed of recording
 
     # Record video
     while(cap.isOpened()):
@@ -112,7 +112,7 @@ def stoprecording():
 #Updates information labels
 def start_test():
     update_filename()
-    # start_recording_proc()
+    start_recording_proc()
     test_timer()
 
     start_time = datetime.now()
@@ -156,7 +156,7 @@ def stop_test():
         timerID = None
         # label.configure(text='Test not running')
         count = 0
-        # stoprecording()
+        stoprecording()
         start_button.config(state=NORMAL)
         lux_button.config(state=NORMAL)
 
