@@ -16,6 +16,8 @@ import time
 from datetime import datetime
 import board
 import adafruit_tsl2591
+import adafruit_ads1x15.ads1115 as ads
+from adafruit_ads1x15.analog_in import AnalogIn
 
 #Global variables (variables that are modified in functions)
 timerID = None
@@ -49,6 +51,9 @@ def update_filename():
     #create a new csv file
     open(filename, 'x', newline = '')
 
+    #add header
+    append_to_csv(["Voltage", "Lux", "Index"])
+
 #Add data to csv data file
 # data must be an iterable
 def append_to_csv(data):
@@ -69,7 +74,7 @@ def startrecording(e, queue, video_file):
     # Create video recorder and encoding
     out = cv2.VideoWriter(video_file,  
                             cv2.VideoWriter_fourcc(*'mp4v'), 
-                            100, size) # TODO - ask ASU about speed of recording
+                            20, size) # TODO - ask ASU about speed of recording
 
     # Record video
     while(cap.isOpened()):
@@ -144,8 +149,15 @@ def test_timer():
 
     print_lux()
 
+    voltage = AnalogIn(volt_sensor, ads.P0)
+
+    str_volt = "{:.2f}".format(voltage.voltage)
+
+    str_lux = "{:.2f}".format(lux_sensor.lux)
+
+    current_voltage_label.config(text='Current Voltage: ' +  str_volt)
     queue.put(count)
-    append_to_csv([sensor.lux, count])
+    append_to_csv([float(str_volt), float(str_lux) , count])
 
     
 
@@ -169,7 +181,7 @@ def exit_program():
 
 #update lux value displayed
 def print_lux():
-    lux = 4
+    lux = "{:.2f}".format(lux_sensor.lux)
     current_lux_label.config(text='Current Lux: ' + str(lux))
 
 
@@ -178,10 +190,10 @@ if __name__ == "__main__":
 
     # Create sensor object, communicating over the board's default I2C bus
     i2c = board.I2C()  # uses board.SCL and board.SDA
-    # i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
 
     # Initialize the sensor.
-    sensor = adafruit_tsl2591.TSL2591(i2c)
+    lux_sensor = adafruit_tsl2591.TSL2591(i2c)
+    volt_sensor = ads.ADS1115(i2c)
 
     #Define root of interface
     root = Tk()
