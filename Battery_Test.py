@@ -108,7 +108,8 @@ def stoprecording():
     multi_event.set()
     multi_process.join()
 
-#Start the test, this method uses recursion to save data every second
+#Updates filename, starts recording, and starts test execution.
+#Updates information labels
 def start_test():
     update_filename()
     # start_recording_proc()
@@ -124,7 +125,8 @@ def start_test():
     start_button.config(state=DISABLED)
     lux_button.config(state=DISABLED)
     
-
+#Record data every second and synchronize count with camera process
+#Update information labels
 def test_timer():
     global timerID, count
     
@@ -137,6 +139,8 @@ def test_timer():
     elapsed_time_label.configure(text='Elapsed time: ' + (str( (count // 3600)).zfill(2) ) + ':' 
                                  + (str( (count // 60)).zfill(2) ) + ':' 
                                  + (str( (count % 60)).zfill(2) ) )
+
+    print_lux()
 
     queue.put(count)
     append_to_csv([count])
@@ -161,8 +165,10 @@ def exit_program():
     stop_test()
     root.destroy()
 
-def get_lux():
-    None
+#update lux value displayed
+def print_lux():
+    lux = 4
+    current_lux_label.config(text='Current Lux: ' + str(lux))
 
 
 if __name__ == "__main__":
@@ -200,12 +206,13 @@ if __name__ == "__main__":
     video_file_label = ttk.Label(test_info_frame, text='Video file: ')
     start_time_label = ttk.Label(test_info_frame, text='Start Time: ')
     current_voltage_label = ttk.Label(test_info_frame, text='Current Voltage: ')
+    current_lux_label = ttk.Label(test_info_frame, text='Current Lux: ')
     elapsed_time_label = ttk.Label(test_info_frame, text='Elapsed Time: ')
 
     #Bind button actions
     start_button.configure(command=start_test)
     stop_button.configure(command=stop_test)
-    lux_button.configure(command=get_lux)
+    lux_button.configure(command=print_lux)
     exitButton.configure(command=exit_program)
     
     #Add elements to button frame
@@ -220,6 +227,7 @@ if __name__ == "__main__":
     video_file_label.grid(sticky='w')
     start_time_label.grid(sticky='w')
     current_voltage_label.grid(sticky='w')
+    current_lux_label.grid(sticky='w')
     elapsed_time_label.grid(sticky='w')
 
     #Add frames to root
